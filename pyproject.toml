@@ -1,0 +1,154 @@
+# 🚀 MCP Server Template - Project Configuration
+# Based on Model Context Protocol Python SDK
+# https://github.com/modelcontextprotocol/python-sdk
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[project]
+name = "mcp-template"
+version = "0.1.0"
+description = "🏗️ Template for building Model Context Protocol servers with FastMCP"
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords = ["mcp", "model-context-protocol", "ai", "llm", "claude"]
+
+# 📦 Core Dependencies
+dependencies = [
+    "mcp[cli]>=1.0.0",  # Model Context Protocol SDK
+    "pydantic>=2.5.0",   # Data validation and settings
+    "click>=8.0.0",      # CLI framework for testing tool
+]
+
+# 🛠️ Development Dependencies
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+]
+
+# 🎯 Entry Points for CLI tools
+[project.scripts]
+mcp-server = "main:main"
+mcp-cli = "cli:main"
+
+# 📝 Project URLs
+[project.urls]
+Homepage = "https://github.com/yourusername/mcp-template"
+Documentation = "https://github.com/yourusername/mcp-template#readme"
+Repository = "https://github.com/yourusername/mcp-template"
+Issues = "https://github.com/yourusername/mcp-template/issues"
+
+# 🔧 Ruff Configuration - Python Linter & Formatter
+# Based on coding standards: max 120 chars, clean code principles
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# Enable essential rules for clean, maintainable code
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "ARG",  # flake8-unused-arguments
+]
+ignore = [
+    "E501",  # Line too long (handled by formatter)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+# 🧪 Pytest Configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html:htmlcov",
+    "--cov-fail-under=80",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+]
+
+# 🔍 MyPy Configuration - Type Checking
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+# 📊 Coverage Configuration
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/venv/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]

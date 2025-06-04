@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "mcp-template": {
+      "command": "uv",
+      "args": ["run", "python", "main.py"],
+      "cwd": "/absolute/path/to/mcp-template",
+      "env": {
+        "ENVIRONMENT": "production",
+        "DEBUG": "false"
+      }
+    }
+  }
+}

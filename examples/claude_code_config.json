@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "mcp-template": {
+      "command": "uv",
+      "args": ["run", "python", "main.py"],
+      "cwd": "/absolute/path/to/mcp-template",
+      "env": {
+        "ENVIRONMENT": "development",
+        "DEBUG": "true"
+      }
+    }
+  },
+  "rules": {
+    "allowedTools": ["mcp__template.*"],
+    "disallowedTools": [],
+    "toolTimeout": 30000
+  }
+}

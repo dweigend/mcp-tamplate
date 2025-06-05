@@ -1,5 +1,5 @@
 # 🔧 MCP Template
-
+This is an early version and is currently under active development. I am making constant changes.
 A simple, clean template for building [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers with Python and FastMCP.
 
 > **This is a template with example implementations.** All tools, resources, and prompts are demonstrations showing how to structure MCP components.
@@ -21,7 +21,7 @@ git clone <this-repo>
 cd mcp-template
 uv sync
 
-# 2. Test locally  
+# 2. Test locally
 uv run python cli.py demo
 
 # 3. Start MCP server
@@ -43,7 +43,7 @@ uv run python cli.py file read data/test.txt
 ```
 
 ### 🔍 Search (Mock)
-```bash  
+```bash
 uv run python cli.py search web "tutorial"
 ```
 
@@ -68,7 +68,7 @@ Add to: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS
 ```
 src/
 ├── server.py           # 🚀 MCP server (FastMCP)
-├── api/               # 🌐 External API connections  
+├── api/               # 🌐 External API connections
 ├── tools/             # 🔧 Tool implementations (examples)
 ├── resources/         # 📁 Resource handlers (examples)
 ├── prompts/           # 💬 Prompt templates (examples)
@@ -87,7 +87,7 @@ src/
 # Test everything
 uv run pytest
 
-# Code quality  
+# Code quality
 uv run ruff check --fix .
 
 # Add dependencies

@@ -1,11 +1,12 @@
-"""🚀 MCP Template Server - FastMCP Implementation.
+"""🚀 MCP Template Server - Clean Architecture Implementation.
 
-Main server implementation using the Model Context Protocol Python SDK.
-Provides tools, resources, and prompts for AI assistants like Claude.
+Main server implementation using FastMCP with separated concerns:
+- Tools: Executable functionality for LLMs  
+- Resources: Data access and server information
+- Prompts: Reusable interaction templates
+- API Layer: External service integrations
 
-References:
-- MCP Python SDK: https://github.com/modelcontextprotocol/python-sdk
-- FastMCP Documentation: https://github.com/modelcontextprotocol/python-sdk#fastmcp
+This demonstrates MCP best practices and clean architecture patterns.
 """
 
 from __future__ import annotations
@@ -32,18 +33,19 @@ from src.config import (
 from src.models import (
     CalculatorInput,
     CalculatorResult,
-    ErrorDetail,
     FileManagerInput,
     FileManagerResult,
-    HealthCheck,
     SearchQuery,
     SearchResponse,
-    ServerInfo,
-    ToolResponse,
 )
 from src.tools.calculator import CalculatorTool
 from src.tools.file_manager import FileManagerTool
 from src.tools.search import SearchTool
+from src.resources.server_info import get_server_info
+from src.resources.health_status import get_health_status
+from src.resources.config_data import get_safe_configuration
+from src.prompts.system_guide import get_system_prompt
+from src.prompts.error_handling import get_error_handling_guide
 
 # =============================================================================
 # 📊 LOGGING SETUP
@@ -100,169 +102,121 @@ search_tool = SearchTool()
 # =============================================================================
 
 @mcp.tool()
-def calculate(input_data: CalculatorInput) -> ToolResponse:
+def calculate(operation: str, numbers: List[float], precision: int = 2) -> CalculatorResult:
     """🧮 Perform mathematical calculations with proper validation.
     
-    Supports basic arithmetic operations with configurable precision.
+    Example tool demonstrating mathematical operations with validation.
     
     Args:
-        input_data: Calculator input with operation type and numbers
+        operation: Mathematical operation (add, subtract, multiply, divide, power, modulo)
+        numbers: List of numbers to operate on (1-10 numbers)
+        precision: Decimal precision for result (0-15, default: 2)
         
     Returns:
-        ToolResponse with calculation result or error details
-        
-    Example:
-        >>> calculate(CalculatorInput(operation="add", numbers=[2, 3]))
-        ToolResponse(success=True, data=CalculatorResult(...))
+        CalculatorResult with calculation details
     """
-    start_time = time.time()
+    logger.info(f"🧮 Calculating: {operation} on {numbers}")
     
-    try:
-        logger.info(f"🧮 Calculating: {input_data.operation} on {input_data.numbers}")
-        
-        result = calculator_tool.calculate(
-            operation=input_data.operation,
-            numbers=input_data.numbers,
-            precision=input_data.precision or 2
-        )
-        
-        execution_time = time.time() - start_time
-        logger.info(f"✅ Calculation completed in {execution_time:.3f}s")
-        
-        return ToolResponse(
-            success=True,
-            data=result,
-            execution_time=execution_time
-        )
-        
-    except Exception as e:
-        execution_time = time.time() - start_time
-        error_detail = ErrorDetail(
-            code="CALCULATION_ERROR",
-            message=str(e),
-            details={"input": input_data.dict()},
-            traceback=str(e) if DEBUG_MODE else None
-        )
-        
-        logger.error(f"❌ Calculation failed: {e}")
-        
-        return ToolResponse(
-            success=False,
-            error=error_detail,
-            execution_time=execution_time
-        )
+    # Create input model for validation
+    calc_input = CalculatorInput(
+        operation=operation,
+        numbers=numbers,
+        precision=precision
+    )
+    
+    # Perform calculation
+    result = calculator_tool.calculate(
+        operation=calc_input.operation,
+        numbers=calc_input.numbers,
+        precision=calc_input.precision
+    )
+    
+    logger.info(f"✅ Calculation completed: {result.formatted_result}")
+    return result
 
 
 @mcp.tool()
-def manage_file(input_data: FileManagerInput) -> ToolResponse:
+def manage_file(
+    operation: str, 
+    path: str, 
+    content: Optional[str] = None, 
+    encoding: str = "utf-8"
+) -> FileManagerResult:
     """📁 Perform secure file operations with validation.
     
-    Supports reading, writing, listing, and checking file existence.
-    All operations are sandboxed to allowed directories.
+    Example tool demonstrating secure file operations within sandboxed directories.
     
     Args:
-        input_data: File manager input with operation and path
+        operation: File operation (read, write, list, exists, delete)
+        path: File path relative to allowed directories
+        content: Content for write operations (optional)
+        encoding: File encoding (default: utf-8)
         
     Returns:
-        ToolResponse with file operation result or error details
-        
-    Example:
-        >>> manage_file(FileManagerInput(operation="read", path="data/example.txt"))
-        ToolResponse(success=True, data=FileManagerResult(...))
+        FileManagerResult with operation details
     """
-    start_time = time.time()
+    logger.info(f"📁 File operation: {operation} on {path}")
     
-    try:
-        logger.info(f"📁 File operation: {input_data.operation} on {input_data.path}")
-        
-        result = file_manager_tool.execute_operation(
-            operation=input_data.operation,
-            path=input_data.path,
-            content=input_data.content,
-            encoding=input_data.encoding
-        )
-        
-        execution_time = time.time() - start_time
-        logger.info(f"✅ File operation completed in {execution_time:.3f}s")
-        
-        return ToolResponse(
-            success=True,
-            data=result,
-            execution_time=execution_time
-        )
-        
-    except Exception as e:
-        execution_time = time.time() - start_time
-        error_detail = ErrorDetail(
-            code="FILE_OPERATION_ERROR",
-            message=str(e),
-            details={"input": input_data.dict()},
-            traceback=str(e) if DEBUG_MODE else None
-        )
-        
-        logger.error(f"❌ File operation failed: {e}")
-        
-        return ToolResponse(
-            success=False,
-            error=error_detail,
-            execution_time=execution_time
-        )
+    # Create input model for validation
+    file_input = FileManagerInput(
+        operation=operation,
+        path=path,
+        content=content,
+        encoding=encoding
+    )
+    
+    # Perform file operation
+    result = file_manager_tool.execute_operation(
+        operation=file_input.operation,
+        path=file_input.path,
+        content=file_input.content,
+        encoding=file_input.encoding
+    )
+    
+    logger.info(f"✅ File operation completed: {result.message}")
+    return result
 
 
 @mcp.tool()
-def search_web(query: SearchQuery) -> ToolResponse:
+def search_web(
+    text: str, 
+    domains: Optional[List[str]] = None, 
+    limit: int = 10, 
+    language: str = "en"
+) -> SearchResponse:
     """🔍 Search the web with optional domain filtering.
     
-    Performs web search with configurable limits and filters.
-    Returns structured search results with relevance scoring.
+    Example tool demonstrating web search patterns (mock implementation).
     
     Args:
-        query: Search query with text, domains, and limits
+        text: Search query text (1-1000 characters)
+        domains: Optional domain filters (max 10)
+        limit: Maximum results to return (1-100, default: 10)
+        language: Search language (default: en)
         
     Returns:
-        ToolResponse with search results or error details
-        
-    Example:
-        >>> search_web(SearchQuery(text="python tutorial", limit=5))
-        ToolResponse(success=True, data=SearchResponse(...))
+        SearchResponse with search results
     """
-    start_time = time.time()
+    logger.info(f"🔍 Searching: '{text}' (limit: {limit})")
     
-    try:
-        logger.info(f"🔍 Searching: '{query.text}' (limit: {query.limit})")
-        
-        results = search_tool.search(
-            text=query.text,
-            domains=query.domains,
-            limit=query.limit,
-            language=query.language
-        )
-        
-        execution_time = time.time() - start_time
-        logger.info(f"✅ Search completed in {execution_time:.3f}s, found {len(results.results)} results")
-        
-        return ToolResponse(
-            success=True,
-            data=results,
-            execution_time=execution_time
-        )
-        
-    except Exception as e:
-        execution_time = time.time() - start_time
-        error_detail = ErrorDetail(
-            code="SEARCH_ERROR",
-            message=str(e),
-            details={"query": query.dict()},
-            traceback=str(e) if DEBUG_MODE else None
-        )
-        
-        logger.error(f"❌ Search failed: {e}")
-        
-        return ToolResponse(
-            success=False,
-            error=error_detail,
-            execution_time=execution_time
-        )
+    # Create query model for validation
+    search_query = SearchQuery(
+        text=text,
+        domains=domains or [],
+        limit=limit,
+        language=language
+    )
+    
+    # Perform search
+    results = search_tool.search(
+        text=search_query.text,
+        domains=search_query.domains,
+        limit=search_query.limit,
+        language=search_query.language
+    )
+    
+    logger.info(f"✅ Search completed, found {len(results.results)} results")
+    return results
 
 
 # =============================================================================
@@ -270,109 +224,73 @@ def search_web(query: SearchQuery) -> ToolResponse:
 # =============================================================================
 
 @mcp.resource("server://info")
-def get_server_info() -> ServerInfo:
-    """⚙️ Get comprehensive server information and status.
-    
-    Returns detailed information about the MCP server including
-    capabilities, uptime, and tool availability.
-    
-    Returns:
-        ServerInfo: Complete server status and metadata
-    """
-    uptime = time.time() - server_start_time
-    
-    return ServerInfo(
-        name=APP_NAME,
-        version=VERSION,
-        description="🏗️ Template for building Model Context Protocol servers",
-        capabilities=[
-            "mathematical_calculations",
-            "file_operations", 
-            "web_search",
-            "health_monitoring"
-        ],
-        tools_count=3,  # calculate, manage_file, search_web
-        uptime=uptime,
-        status="running"
-    )
+def server_info() -> str:
+    """⚙️ Get comprehensive server information and status."""
+    info = get_server_info(server_start_time)
+    return f"""
+# Server Information
+
+**Name:** {info['name']}
+**Version:** {info['version']}
+**Description:** {info['description']}
+**Status:** {info['status']}
+**Uptime:** {info['uptime']:.1f} seconds
+**Tools Available:** {info['tools_count']}
+
+**Capabilities:**
+{chr(10).join(f"- {cap}" for cap in info['capabilities'])}
+
+This is an example MCP server template demonstrating tools, resources, and prompts.
+"""
 
 
 @mcp.resource("server://health")
-def get_health_status() -> HealthCheck:
-    """💚 Comprehensive health check of server components.
+def health_status() -> str:
+    """💚 Comprehensive health check of server components."""
+    health = get_health_status(calculator_tool, file_manager_tool, search_tool)
     
-    Performs health checks on all server subsystems and returns
-    detailed status information.
+    status_emoji = "💚" if health['status'] == "healthy" else "🔴"
+    checks_list = []
+    for check_name, check_status in health['checks'].items():
+        emoji = "✅" if check_status else "❌"
+        checks_list.append(f"{emoji} {check_name.replace('_', ' ').title()}")
     
-    Returns:
-        HealthCheck: Current health status and component checks
-    """
-    start_time = time.time()
-    
-    # Perform health checks
-    checks = {
-        "server_running": True,
-        "tools_available": True,
-        "file_system_accessible": file_manager_tool.health_check(),
-        "calculator_functional": calculator_tool.health_check(),
-        "search_available": search_tool.health_check(),
-        "logging_working": ENABLE_LOGGING
-    }
-    
-    # Determine overall status
-    all_healthy = all(checks.values())
-    status = "healthy" if all_healthy else "degraded"
-    
-    response_time = time.time() - start_time
-    
-    logger.info(f"💚 Health check completed: {status} ({response_time:.3f}s)")
-    
-    return HealthCheck(
-        status=status,
-        checks=checks,
-        response_time=response_time
-    )
+    return f"""
+# Health Status {status_emoji}
+
+**Overall Status:** {health['status'].upper()}
+**Response Time:** {health['response_time']:.3f}s
+
+**Component Checks:**
+{chr(10).join(checks_list)}
+"""
 
 
 @mcp.resource("config://settings") 
-def get_configuration() -> Dict[str, Any]:
-    """⚙️ Get current server configuration (safe subset).
-    
-    Returns non-sensitive configuration values that can be
-    safely exposed to clients.
-    
-    Returns:
-        Dict: Safe configuration settings
-    """
-    from src.config import (
-        BATCH_SIZE,
-        CACHE_SIZE,
-        DEFAULT_TIMEOUT,
-        MAX_RETRIES,
-        SEARCH_DEFAULT_LIMIT,
-        SEARCH_MAX_RESULTS,
-    )
-    
-    return {
-        "server": {
-            "name": SERVER_NAME,
-            "version": VERSION,
-            "debug_mode": DEBUG_MODE
-        },
-        "limits": {
-            "default_timeout": DEFAULT_TIMEOUT,
-            "max_retries": MAX_RETRIES,
-            "batch_size": BATCH_SIZE,
-            "cache_size": CACHE_SIZE
-        },
-        "search": {
-            "default_limit": SEARCH_DEFAULT_LIMIT,
-            "max_results": SEARCH_MAX_RESULTS
-        },
-        "features": {
-            "logging_enabled": ENABLE_LOGGING
-        }
-    }
+def configuration() -> str:
+    """⚙️ Get current server configuration (safe subset)."""
+    config = get_safe_configuration()
+    return f"""
+# Server Configuration
+
+## Server
+- Name: {config['server']['name']}
+- Version: {config['server']['version']}
+- Debug Mode: {config['server']['debug_mode']}
+
+## Limits
+- Default Timeout: {config['limits']['default_timeout']}s
+- Max Retries: {config['limits']['max_retries']}
+- Batch Size: {config['limits']['batch_size']}
+- Cache Size: {config['limits']['cache_size']}
+
+## Search Settings
+- Default Limit: {config['search']['default_limit']}
+- Max Results: {config['search']['max_results']}
+
+## Features
+- Logging Enabled: {config['features']['logging_enabled']}
+"""
 
 
 # =============================================================================
@@ -381,147 +299,40 @@ def get_configuration() -> Dict[str, Any]:
 
 @mcp.prompt()
 def system_prompt() -> str:
-    """🎯 System prompt for optimal MCP server interaction.
-    
-    Provides guidance for AI assistants on how to effectively
-    use this MCP server's capabilities.
-    
-    Returns:
-        str: Comprehensive system prompt
-    """
-    return f"""
-🚀 {APP_NAME} v{VERSION} - MCP Server
-
-You are connected to a powerful MCP server that provides:
-
-🧮 **Calculator Tool**
-- Perform mathematical operations (add, subtract, multiply, divide, power, modulo)
-- Support for multiple numbers and configurable precision
-- Usage: calculate(operation="add", numbers=[1, 2, 3], precision=2)
-
-📁 **File Manager Tool**  
-- Secure file operations within sandboxed directories
-- Read, write, list, and check file existence
-- Usage: manage_file(operation="read", path="data/example.txt")
-
-🔍 **Search Tool**
-- Web search with domain filtering and result limits
-- Structured results with relevance scoring
-- Usage: search_web(text="python tutorial", domains=["docs.python.org"], limit=5)
-
-📊 **Server Resources**
-- server://info - Get server information and status
-- server://health - Comprehensive health check
-- config://settings - Safe configuration values
-
-💡 **Best Practices**
-- Always validate inputs before making tool calls
-- Use appropriate precision for calculations
-- Specify file paths relative to allowed directories
-- Filter search results by domain when possible
-- Check server health if experiencing issues
-
-🛡️ **Security**
-- File operations are sandboxed to safe directories
-- Path traversal protection is enforced
-- Input validation prevents malicious requests
-- Error handling provides safe failure modes
-
-Use these tools efficiently to help users with calculations, file management, and information retrieval!
-"""
+    """🎯 System prompt for optimal MCP server interaction."""
+    return get_system_prompt()
 
 
 @mcp.prompt()
 def error_handling_guide() -> str:
-    """🚨 Comprehensive error handling and troubleshooting guide.
-    
-    Provides detailed guidance on handling errors and edge cases
-    when interacting with the MCP server.
-    
-    Returns:
-        str: Error handling best practices
-    """
-    return """
-🚨 MCP Server Error Handling Guide
-
-**Common Error Types & Solutions:**
-
-🧮 **Calculator Errors**
-- Division by zero → Check second number is not 0
-- Invalid operation → Use: add, subtract, multiply, divide, power, modulo
-- Too many numbers → Some operations require exactly 2 numbers
-- Precision out of range → Use 0-15 for precision value
-
-📁 **File Operation Errors**
-- Path not found → Ensure file exists in allowed directories (data/, assets/)
-- Permission denied → Check file permissions and sandboxing rules
-- Path traversal → Avoid '..' and absolute paths
-- File too large → Files must be under 10MB
-- Invalid encoding → Use utf-8 or specify correct encoding
-
-🔍 **Search Errors**
-- No results → Try broader search terms or remove domain filters
-- Rate limiting → Wait before making additional requests
-- Invalid domains → Ensure domain format includes TLD (e.g., example.com)
-- Query too long → Keep search queries under 1000 characters
-
-⚙️ **Server Errors**
-- Resource unavailable → Check server health with server://health
-- Timeout → Reduce request complexity or retry with backoff
-- Configuration error → Verify server settings with config://settings
-
-**Error Response Format:**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Human readable message",
-    "details": {...},
-    "timestamp": "2024-01-01T12:00:00"
-  },
-  "execution_time": 0.123
-}
-```
-
-**Troubleshooting Steps:**
-1. Check the error code and message
-2. Verify input parameters match expected format
-3. Test with simpler inputs to isolate the issue
-4. Check server health if multiple operations fail
-5. Review server logs for additional context (if available)
-
-**Recovery Strategies:**
-- Implement exponential backoff for retries
-- Validate inputs before sending requests  
-- Gracefully handle and display error messages to users
-- Provide fallback options when operations fail
-- Monitor server health proactively
-"""
+    """🚨 Comprehensive error handling and troubleshooting guide."""
+    return get_error_handling_guide()
 
 
 # =============================================================================
 # 🏃‍♂️ SERVER STARTUP
 # =============================================================================
 
+def _initialize_tools() -> None:
+    """Initialize all tools."""
+    calculator_tool.initialize()
+    file_manager_tool.initialize()
+    search_tool.initialize()
+
+
 def run_server() -> None:
     """🏃‍♂️ Start the MCP server with proper initialization."""
     logger.info(f"🚀 Starting {APP_NAME} v{VERSION}")
-    logger.info(f"🔧 Debug mode: {DEBUG_MODE}")
-    logger.info(f"📊 Logging enabled: {ENABLE_LOGGING}")
     
     try:
         # Validate configuration
         from src.config import validate_config
         validate_config()
-        logger.info("✅ Configuration validated successfully")
+        logger.info("✅ Configuration validated")
         
         # Initialize tools
-        logger.info("🔧 Initializing tools...")
-        calculator_tool.initialize()
-        file_manager_tool.initialize()
-        search_tool.initialize()
-        logger.info("✅ All tools initialized successfully")
+        _initialize_tools()
+        logger.info("✅ Tools initialized")
         
         # Start server
         logger.info(f"🌐 MCP Server ready at {SERVER_NAME}")

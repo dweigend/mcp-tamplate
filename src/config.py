@@ -28,6 +28,7 @@ DEFAULT_TIMEOUT = 30
 CONNECTION_TIMEOUT = 10
 MAX_RETRIES = 3
 BATCH_SIZE = 50
+CACHE_SIZE = 1000
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 
 # =============================================================================

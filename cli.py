@@ -122,6 +122,8 @@ def calculate(operation: str, numbers: tuple, precision: int, output_json: bool)
     try:
         # Convert to list and create input model
         numbers_list = list(numbers)
+        if DEBUG_MODE:
+            click.echo(f"Debug: numbers={numbers}, numbers_list={numbers_list}")
         calc_input = CalculatorInput(
             operation=OperationType(operation),
             numbers=numbers_list,

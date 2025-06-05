@@ -1,0 +1,1 @@
+# 💬 Prompts - MCP prompt templates

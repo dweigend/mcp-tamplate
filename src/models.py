@@ -1,6 +1,7 @@
-"""📊 Simplified Pydantic models for MCP server data validation.
+"""📊 Pydantic models for MCP server data validation.
 
-Core data structures following simplicity-first principles.
+Core data structures for tools, resources, and server components.
+Following MCP specifications and clean code principles.
 """
 
 from __future__ import annotations
@@ -60,11 +61,11 @@ class CalculatorInput(BaseModel):
 
 
 class CalculatorResult(BaseModel):
+    """Result from calculator operations."""
     result: float
     operation: OperationType
     input_numbers: List[float]
     formatted_result: str
-    calculation_time: datetime = Field(default_factory=datetime.now)
 
 
 # =============================================================================
@@ -101,14 +102,13 @@ class FileInfo(BaseModel):
 
 
 class FileManagerResult(BaseModel):
+    """Result from file manager operations."""
     operation: FileOperation
     path: str
-    success: bool
     content: Optional[str] = None
     files: Optional[List[FileInfo]] = None
     file_info: Optional[FileInfo] = None
     message: str
-    timestamp: datetime = Field(default_factory=datetime.now)
 
 
 # =============================================================================
@@ -138,11 +138,10 @@ class SearchResult(BaseModel):
 
 
 class SearchResponse(BaseModel):
+    """Search results response."""
     query: str
     results: List[SearchResult]
     total_found: int = Field(ge=0)
-    search_time: float = Field(ge=0.0)
-    timestamp: datetime = Field(default_factory=datetime.now)
 
 
 # =============================================================================
@@ -157,12 +156,7 @@ class ErrorDetail(BaseModel):
     traceback: Optional[str] = None
 
 
-class ToolResponse(BaseModel):
-    success: bool
-    data: Optional[Any] = None
-    error: Optional[ErrorDetail] = None
-    execution_time: float = Field(ge=0.0)
-    timestamp: datetime = Field(default_factory=datetime.now)
+# ToolResponse removed - FastMCP handles tool responses automatically
 
 
 # =============================================================================
@@ -170,6 +164,7 @@ class ToolResponse(BaseModel):
 # =============================================================================
 
 class ServerInfo(BaseModel):
+    """Server information for resources."""
     name: str
     version: str
     description: str
@@ -180,7 +175,7 @@ class ServerInfo(BaseModel):
 
 
 class HealthCheck(BaseModel):
+    """Health check status for resources."""
     status: str = "healthy"
-    timestamp: datetime = Field(default_factory=datetime.now)
     checks: Dict[str, bool] = Field(default_factory=dict)
     response_time: float = Field(ge=0.0)

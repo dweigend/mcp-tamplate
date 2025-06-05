@@ -1,20 +1,18 @@
-# 🔧 Tools Directory
+# 🔧 Example Tools
 
-Implementation of MCP tools following single responsibility and security-first principles.
+> **These are demonstration tools** showing MCP implementation patterns. Replace with your own implementations.
 
 ## 📋 Overview
 
-Tools are the **executable components** of an MCP server that allow LLMs to perform actions with human oversight. Each tool:
-
-- Validates all inputs with Pydantic models
-- Implements proper error handling with early returns
-- Provides health check capabilities
-- Follows security best practices
-- Maintains under 200-400 lines per module
+Example tools demonstrate how to structure MCP components:
+- Input validation with Pydantic models  
+- Security patterns and error handling
+- Testing and CLI integration
+- Clean architecture principles
 
 ## 🧮 Calculator Tool (`calculator.py`)
 
-**Purpose:** Secure mathematical operations with validation.
+**Purpose:** Example tool demonstrating mathematical operations with validation.
 
 **Features:**
 - Support for 6 operations: add, subtract, multiply, divide, power, modulo
@@ -47,7 +45,7 @@ print(result.formatted_result)  # "8.00"
 
 ## 📁 File Manager Tool (`file_manager.py`)
 
-**Purpose:** Secure file operations within sandboxed directories.
+**Purpose:** Example tool demonstrating secure file operations within sandboxed directories.
 
 **Features:**
 - Read, write, list, delete, and existence check operations
@@ -88,7 +86,7 @@ print(result.content)  # "Hello, World!"
 
 ## 🔍 Search Tool (`search.py`)
 
-**Purpose:** Web search with filtering and rate limiting (template implementation).
+**Purpose:** Example tool demonstrating web search patterns (mock implementation for template).
 
 **Features:**
 - Mock search results for template purposes

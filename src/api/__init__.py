@@ -1,0 +1,1 @@
+# 🌐 API Layer - External connections and integrations

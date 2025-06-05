@@ -1,0 +1,1 @@
+# 📁 Resources - MCP resource handlers

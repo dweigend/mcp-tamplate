@@ -21,8 +21,9 @@ A simple, clean template for building [Model Context Protocol (MCP)](https://mod
 
 ```bash
 # 1. Clone and setup
-git clone <this-repo>
-cd mcp-template
+git clone https://github.com/dweigend/mcp-tamplate.git
+# or via GitHub CLI: gh repo clone dweigend/mcp-tamplate
+cd mcp-tamplate
 uv sync
 
 # 2. Test locally

@@ -1,107 +1,45 @@
-# 🧪 Example Tests
+# 🧪 Tests
 
-> This directory contains example tests demonstrating testing patterns for MCP servers.
+Example test suite for the MCP template server.
 
-## 📋 Overview
+## Test Files
 
-Example test patterns showing:
-- Component testing (tools, resources, prompts)
-- API layer mocking  
-- Security validation
-- Performance benchmarks
-- Integration testing
+- `test_models.py` - Pydantic model validation tests
+- `test_tools.py` - Tool functionality tests
+- `test_server.py` - Server integration tests
 
-## 📁 Test Structure
-
-```
-tests/
-├── test_models.py        # Example model validation tests
-├── test_tools.py         # Example tool functionality tests  
-├── test_server.py        # Example server integration tests
-```
-
-## 🧪 Test Categories
-
-### 📊 Model Tests (`test_models.py`)
-
-Example tests for Pydantic data validation:
-
-```python
-class TestCalculatorModels:
-    def test_valid_input(self):
-        # Test successful model creation
-        
-    def test_invalid_input(self):
-        # Test validation error handling
-        
-    def test_edge_cases(self):
-        # Test boundary conditions
-```
-
-**Coverage:**
-- Valid input validation ✅
-- Invalid input rejection ❌
-- Edge cases and boundaries 🔄
-- Serialization/deserialization 📤📥
-- Custom validator logic ✅
-
-### 🔧 Tool Tests (`test_tools.py`)
-
-Example tests for tool implementations:
-
-```python
-class TestCalculatorTool:
-    @pytest.fixture
-    def calculator(self):
-        calc = CalculatorTool()
-        calc.initialize()
-        return calc
-    
-    def test_basic_operations(self, calculator):
-        # Test each mathematical operation
-        
-    def test_error_handling(self, calculator):
-        # Test division by zero, invalid inputs
-        
-    def test_precision_formatting(self, calculator):
-        # Test decimal precision handling
-```
-
-**Coverage:**
-- Tool initialization 🔧
-- Health checks 💚
-- Valid operations ✅
-- Error conditions ❌
-- Security validation 🔒
-- Performance benchmarks ⚡
-
-### 🚀 Server Tests (`test_server.py`)
-
-Example tests for MCP server integration:
-
-```python
-class TestServerIntegration:
-    def test_tool_integration(self):
-        # Test server wrapper functions
-        
-    def test_resource_endpoints(self):
-        # Test server info, health, config
-        
-    def test_error_recovery(self):
-        # Test graceful error handling
-```
-
-## 🎯 Running Tests
+## Running Tests
 
 ```bash
-# Run all tests
+# All tests
 uv run pytest
 
-# Run with coverage
+# With coverage
 uv run pytest --cov=src --cov-report=html
 
-# Run specific test file
-uv run pytest tests/test_models.py -v
+# Specific file
+uv run pytest tests/test_tools.py -v
 ```
 
-These examples demonstrate testing patterns for MCP servers. Customize for your specific implementations.
+## Test Pattern
+
+```python
+class TestComponent:
+    @pytest.fixture
+    def component(self):
+        """Setup test component."""
+        return Component()
+    
+    def test_success_case(self, component):
+        """Test normal operation."""
+        assert component.execute() == expected
+    
+    def test_error_case(self, component):
+        """Test error handling."""
+        with pytest.raises(ValueError):
+            component.execute(invalid_input)
+```
+
+## Coverage Target
+
+Minimum 80% code coverage required.

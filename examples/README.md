@@ -1,40 +1,37 @@
 # 📋 Configuration Examples
 
-> These are example configurations for integrating the MCP template with Claude Desktop and Claude Code.
+Example configurations for MCP server integration.
 
-## 🔗 Claude Desktop
+## Files
 
-**File:** `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
+- `claude_desktop_config.json` - Claude Desktop configuration
+- `claude_code_config.json` - Claude Code configuration  
+
+## Usage
+
+### Claude Desktop (macOS)
+```bash
+cp claude_desktop_config.json ~/Library/Application\ Support/Claude/claude_desktop_config.json
+```
+
+### Claude Code (Project)
+```bash
+mkdir -p .claude
+cp claude_code_config.json .claude/settings.json
+```
+
+## Configuration Format
 
 ```json
 {
   "mcpServers": {
-    "mcp-template": {
+    "your-server": {
       "command": "uv",
       "args": ["run", "python", "main.py"],
-      "cwd": "/absolute/path/to/mcp-template"
+      "cwd": "/path/to/server"
     }
   }
 }
 ```
 
-## 🤖 Claude Code
-
-**File:** `.claude/settings.json` (project)
-
-```json
-{
-  "mcpServers": {
-    "mcp-template": {
-      "command": "uv", 
-      "args": ["run", "python", "main.py"],
-      "cwd": "/absolute/path/to/mcp-template"
-    }
-  }
-}
-```
-
-See the included example configuration files:
-- `claude_desktop_config.json` - Claude Desktop setup
-- `claude_code_config.json` - Claude Code setup
-
+📖 **See MCP Documentation**: https://modelcontextprotocol.io/docs/tools/claude-desktop

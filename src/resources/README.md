@@ -1,36 +1,26 @@
-# 📁 Example Resources
+# 📊 MCP Resources
 
-> These are demonstration MCP resources showing how to expose data to LLMs.
+Read-only data exposed to LLMs for context and information.
 
-## Purpose
+## What are MCP Resources?
 
-Resources provide **application-controlled** data access:
-- Server information and status
-- Configuration data (safe subset)
-- Dynamic content and metadata
-- File contents and system data
+Application-controlled data that LLMs can access.
 
-## MCP Resource Pattern
+📖 **See MCP Documentation**: https://modelcontextprotocol.io/docs/concepts/resources
 
-Resources are identified by URI and provide either:
-- **Text content** (UTF-8 encoded)
-- **Binary content** (base64 encoded)
+## Current Files
 
-## Example Structure
+- `server_info.py` - Server metadata and capabilities
+- `health_status.py` - Tool health monitoring
+- `config_data.py` - Safe configuration exposure
 
-```
-resources/
-├── README.md           # This file
-├── server_info.py      # Server metadata resource
-├── health_status.py    # Health monitoring resource  
-└── config_data.py      # Configuration resource
-```
-
-## Implementation Pattern
+## Pattern
 
 ```python
-@mcp.resource("scheme://path")
-def resource_handler() -> ResourceData:
-    # Return structured data for LLM consumption
-    pass
+def get_resource_data() -> Dict[str, Any]:
+    """Return structured data for LLM access."""
+    return {
+        "key": "value",
+        "timestamp": datetime.now()
+    }
 ```

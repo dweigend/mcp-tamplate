@@ -6,13 +6,22 @@ Core implementation of the MCP Template Server.
 
 ```
 src/
-├── config.py          # 🎛️ Central configuration and settings
-├── models.py          # 📊 Pydantic data models and validation
-├── server.py          # 🚀 FastMCP server implementation
-└── tools/             # 🔧 Tool implementations
-    ├── calculator.py  # 🧮 Mathematical operations
-    ├── file_manager.py # 📁 Secure file operations
-    └── search.py      # 🔍 Web search functionality
+├── config.py              # 🎛️ Central configuration and settings
+├── models.py              # 📊 Pydantic data models and validation
+├── server.py              # 🚀 FastMCP server implementation
+├── api/                   # 🌐 External API integrations
+│   └── web_search.py      # 🔍 Web search API client
+├── prompts/               # 💬 System prompts and guides
+│   ├── error_handling.py  # ❌ Error handling prompts
+│   └── system_guide.py    # 📖 System guide prompts
+├── resources/             # 📊 MCP resources
+│   ├── config_data.py     # ⚙️ Configuration data resource
+│   ├── health_status.py   # 💚 Health status resource
+│   └── server_info.py     # ℹ️ Server information resource
+└── tools/                 # 🔧 Tool implementations
+    ├── calculator.py      # 🧮 Mathematical operations
+    ├── file_manager.py    # 📁 Secure file operations
+    └── search.py          # 🔍 Search functionality
 ```
 
 ## 🎛️ Configuration (`config.py`)
@@ -93,6 +102,55 @@ Individual tool implementations following single responsibility principle.
 - Domain filtering
 - Rate limiting
 - Extensible for real APIs
+
+## 🌐 API Directory
+
+External API integrations and clients.
+
+### 🔍 Web Search API (`api/web_search.py`)
+- Example API client implementation
+- Configurable API key support
+- Health check functionality
+- Mock search results for testing
+- Ready to replace with real search APIs (Google, Bing, etc.)
+
+## 💬 Prompts Directory
+
+System prompts and guidance for optimal MCP interaction.
+
+### ❌ Error Handling Guide (`prompts/error_handling.py`)
+- Comprehensive error documentation
+- Tool-specific error solutions
+- Common troubleshooting patterns
+- User-friendly error messages
+
+### 📖 System Guide (`prompts/system_guide.py`)
+- Server introduction and capabilities
+- Tool documentation and examples
+- Usage patterns and best practices
+- Version and feature information
+
+## 📊 Resources Directory
+
+MCP resources for server information and monitoring.
+
+### ⚙️ Configuration Data (`resources/config_data.py`)
+- Safe exposure of server settings
+- Runtime configuration values
+- Feature flags and limits
+- No sensitive data exposure
+
+### 💚 Health Status (`resources/health_status.py`)
+- Comprehensive health checks
+- Tool availability monitoring
+- Performance timing metrics
+- Real-time status reporting
+
+### ℹ️ Server Information (`resources/server_info.py`)
+- Server metadata and version
+- Capability discovery
+- Uptime tracking
+- Feature documentation
 
 ## 🔄 Development Patterns
 

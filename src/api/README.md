@@ -1,51 +1,30 @@
-# 🌐 API Layer
+# 🌐 API Directory
 
-> This directory contains external API connections and integrations, separate from MCP logic.
+External API integrations for the MCP server.
 
 ## Purpose
 
-The API layer handles connections to external services:
-- Web APIs (search, data sources)
-- Database connections  
+Isolates external service integrations from MCP logic:
+- Web search APIs
 - Third-party services
-- Authentication systems
+- Mock implementations for testing
 
-## Architecture Principle
+## Current Files
 
-**Separation of Concerns**: External API logic is isolated from MCP server implementation, making it easier to:
-- Test API integrations independently
-- Mock external services for development
-- Replace or update API implementations
-- Handle rate limiting and authentication
+- `web_search.py` - Example web search API client (mock implementation)
 
-## Example Structure
-
-```
-api/
-├── README.md           # This file
-├── web_search.py       # Web search API integration
-├── database.py         # Database connections
-├── auth.py            # Authentication services
-└── clients/           # API client implementations
-```
-
-## Implementation Pattern
+## Pattern
 
 ```python
-class ExternalAPIClient:
-    def __init__(self, api_key: str = None):
-        self._client = None
+class APIClient:
+    def __init__(self, api_key=None):
         self._api_key = api_key
     
-    def initialize(self) -> None:
-        # Initialize API client
-        pass
-    
     def health_check(self) -> bool:
-        # Test API connectivity
+        # Test connectivity
         pass
     
-    def make_request(self, **kwargs):
+    def search(self, query: str) -> List[Dict]:
         # API request logic
         pass
 ```

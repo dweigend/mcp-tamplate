@@ -1,38 +1,24 @@
-# 💬 Example Prompts
+# 💬 MCP Prompts
 
-> These are demonstration MCP prompts showing how to create reusable LLM interaction templates.
+Reusable prompt templates for enhanced LLM interactions.
 
-## Purpose
+## What are MCP Prompts?
 
-Prompts provide **user-controlled** LLM interaction templates:
-- System guidance and context
-- Workflow templates  
-- Error handling guides
-- Interactive assistance patterns
+User-controlled templates that guide LLM behavior.
 
-## MCP Prompt Pattern
+📖 **See MCP Documentation**: https://modelcontextprotocol.io/docs/concepts/prompts
 
-Prompts can include:
-- Static templates
-- Dynamic arguments
-- Resource references
-- Multi-step workflows
+## Current Files
 
-## Example Structure
+- `system_guide.py` - Server capabilities and usage examples
+- `error_handling.py` - Troubleshooting guide for common errors
 
-```
-prompts/
-├── README.md           # This file
-├── system_guide.py     # System prompt template
-├── error_handling.py   # Error troubleshooting guide
-└── workflows.py        # Interactive workflow templates
-```
-
-## Implementation Pattern
+## Pattern
 
 ```python
-@mcp.prompt()
-def prompt_template(args: Optional[Dict] = None) -> str:
-    # Return formatted prompt string
-    pass
+def get_prompt_name() -> str:
+    """Return formatted prompt template."""
+    return f"""
+    Prompt content with {dynamic_values}
+    """
 ```

@@ -41,6 +41,7 @@ from pydantic import ValidationError
 # Add src to Python path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
+from src.config import DEBUG_MODE
 from src.models import (
     CalculatorInput,
     FileManagerInput,
@@ -153,7 +154,10 @@ def calculate(operation: str, numbers: tuple, precision: int, output_json: bool)
         print_error(f"Invalid input: {e}")
         sys.exit(1)
     except Exception as e:
+        import traceback
         print_error(f"Calculation failed: {e}")
+        if DEBUG_MODE:
+            traceback.print_exc()
         sys.exit(1)
 
 

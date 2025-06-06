@@ -1,8 +1,12 @@
 # 🔧 MCP Template
-This is an early version and is currently under active development. I am making constant changes.
+
 A simple, clean template for building [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers with Python and FastMCP.
 
 > **This is a template with example implementations.** All tools, resources, and prompts are demonstrations showing how to structure MCP components.
+
+
+**⚠️ This is an early version and is currently under active development. I am making constant changes.**
+
 
 ## ✨ What's Included
 

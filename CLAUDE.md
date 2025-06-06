@@ -4,12 +4,13 @@ This file contains specific instructions for AI assistants (Claude, GPT, etc.) w
 
 ## 🎯 Project Overview
 
-This is a **template repository** for building Model Context Protocol (MCP) servers using Python and FastMCP. It provides:
+This is a **comprehensive template repository** for building Model Context Protocol (MCP) servers using Python and FastMCP. It provides:
 
-- 🏗️ **Structured architecture** with tools, resources, and prompts
-- 🔧 **Example implementations** of calculator, file manager, and search tools  
+- 🏗️ **Complete MCP architecture** with tools, resources, prompts, and API integrations
+- 🔧 **Production-ready examples** of calculator, file manager, search tools, and data resources
+- 💭 **LLM guidance system** with error handling and usage prompts
 - 🧪 **Comprehensive testing** with pytest and 80%+ coverage
-- 📊 **Production-ready** configuration with logging, validation, and security
+- 📊 **Enterprise-grade** configuration with logging, validation, and security
 - 🚀 **Easy deployment** with UV package management and CLI tools
 
 ## 🔄 Development Workflow
@@ -41,13 +42,47 @@ src/
 ├── config.py           # 🎛️ ALL configuration settings
 ├── models.py           # 📊 Pydantic data models  
 ├── server.py           # 🚀 FastMCP server implementation
-└── tools/              # 🔧 Tool implementations
-    ├── calculator.py   # 🧮 Math operations
-    ├── file_manager.py # 📁 Secure file operations
-    └── search.py       # 🔍 Web search (mock implementation)
+├── api/                # 🌐 External API integrations
+│   └── web_search.py   # 🔍 Web search API client
+├── prompts/            # 💭 MCP prompt templates for LLM guidance
+│   ├── error_handling.py # 🚨 Troubleshooting guide
+│   └── system_guide.py   # 📖 Server capabilities and usage examples
+├── resources/          # 📊 Read-only data exposed to LLMs
+│   ├── config_data.py  # ⚙️ Safe configuration data exposure
+│   ├── health_status.py # 💚 Tool health monitoring data
+│   └── server_info.py  # ℹ️ Server metadata and capabilities
+└── tools/              # 🔧 Tool implementations (actions LLMs can invoke)
+    ├── calculator.py   # 🧮 Math operations with validation
+    ├── file_manager.py # 📁 Secure file operations (sandboxed)
+    └── search.py       # 🔍 Web search integration
 ```
 
-### 4. 🧪 Testing Requirements
+### 4. 🏛️ MCP Architecture Components
+
+This template implements the full Model Context Protocol specification with four distinct layers:
+
+#### 🔧 **Tools** (`src/tools/`)
+Actions that LLMs can invoke to perform operations:
+- **calculator.py**: Mathematical operations with input validation
+- **file_manager.py**: Secure file operations within sandboxed directories  
+- **search.py**: Web search integration using the API layer
+
+#### 📊 **Resources** (`src/resources/`)
+Read-only data that LLMs can access for context:
+- **server_info.py**: Server metadata, version, capabilities, and uptime
+- **health_status.py**: Real-time health monitoring of all components
+- **config_data.py**: Safe subset of server configuration data
+
+#### 💭 **Prompts** (`src/prompts/`)
+Templates that guide LLM behavior and provide instructions:
+- **system_guide.py**: Server capabilities and usage examples
+- **error_handling.py**: Comprehensive troubleshooting guide for common errors
+
+#### 🌐 **API Layer** (`src/api/`)
+External service integrations and API clients:
+- **web_search.py**: Mock web search API client (template for real integrations)
+
+### 5. 🧪 Testing Requirements
 
 - **Minimum 80% code coverage**
 - **Test all error paths** and edge cases
@@ -65,9 +100,10 @@ uv run pytest -m performance       # Performance tests
 uv run pytest tests/test_models.py # Model validation tests
 ```
 
-### 5. 🔧 Adding New Tools
+### 6. 🔧 Adding New MCP Components
 
-To add a new tool, follow this pattern:
+#### Adding New Tools
+To add a new tool (action LLMs can invoke), follow this pattern:
 
 1. **Create model classes** in `src/models.py`:
 ```python
@@ -109,7 +145,31 @@ def new_tool_function(input_data: NewToolInput) -> ToolResponse:
 5. **Update CLI** in `cli.py` for local testing
 6. **Add configuration** to `src/config.py` if needed
 
-### 6. 🛡️ Security Guidelines
+#### Adding New Resources
+To add a new resource (data LLMs can access):
+
+1. **Create resource class** in `src/resources/new_resource.py`
+2. **Implement data provider with health checks**
+3. **Register in server** with `@mcp.resource()`
+4. **Add tests** for data accuracy and performance
+
+#### Adding New Prompts
+To add a new prompt template:
+
+1. **Create prompt provider** in `src/prompts/new_prompt.py`
+2. **Define dynamic prompt generation logic**
+3. **Register in server** with `@mcp.prompt()`
+4. **Test prompt variations** and LLM responses
+
+#### Adding New API Integrations
+To add external service integration:
+
+1. **Create API client** in `src/api/new_service.py`
+2. **Implement authentication and error handling**
+3. **Add configuration** for API keys and endpoints
+4. **Mock in tests** to avoid external dependencies
+
+### 7. 🛡️ Security Guidelines
 
 - **Validate ALL inputs** using Pydantic models
 - **Sanitize file paths** to prevent traversal attacks  
@@ -118,7 +178,7 @@ def new_tool_function(input_data: NewToolInput) -> ToolResponse:
 - **Never expose sensitive data** in responses or logs
 - **Use safe defaults** and fail securely
 
-### 7. 📊 Error Handling Patterns
+### 8. 📊 Error Handling Patterns
 
 ```python
 # ✅ Good: Early returns with validation
@@ -146,7 +206,7 @@ def process_data(data):
         return handle_validation_error()
 ```
 
-### 8. 🔍 Code Quality Standards
+### 9. 🔍 Code Quality Standards
 
 - **Line length**: 120 characters maximum
 - **Function length**: 20 lines maximum  
